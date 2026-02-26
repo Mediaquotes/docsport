@@ -222,22 +222,9 @@ class DocsPortInitializer:
         return self.config
 
     def create_directory_structure(self):
-        """Create the required directory structure."""
-        base_path = Path("DocsPort")
-
-        directories = [
-            "data",
-            "frontend/static/css",
-            "frontend/static/js",
-            "frontend/templates",
-            "backend/api",
-            "backend/analysis",
-            "backend/execution",
-            "logs"
-        ]
-
-        for directory in directories:
-            (base_path / directory).mkdir(parents=True, exist_ok=True)
+        """Create required runtime directories."""
+        for directory in ["data", "logs"]:
+            Path(directory).mkdir(parents=True, exist_ok=True)
 
     def get_status(self) -> Dict[str, Any]:
         """Return current status."""

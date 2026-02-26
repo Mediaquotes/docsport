@@ -20,6 +20,8 @@
 
 ## Quick Start
 
+**Prerequisites:** Python 3.9 or higher
+
 ```bash
 # Clone the repository
 git clone https://github.com/mediaquotes/docsport.git
@@ -32,7 +34,21 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Open `http://localhost:<port>` in your browser (the port is printed in the terminal).
+DocsPort will automatically find a free port and print the URL in the terminal:
+
+```
+DocsPort running on: http://127.0.0.1:8000
+```
+
+Open that URL in your browser. You'll see a web UI where you can:
+
+1. **Browse & edit** Python files from the current working directory
+2. **Analyze** code structure (classes, functions, dependencies)
+3. **Visualize** call graphs and flowcharts
+4. **Execute** Python code in a sandboxed environment
+5. **Annotate** code with comments
+
+To analyze a different project, run `python /path/to/docsport/main.py` from that project's directory.
 
 ## Project Structure
 
