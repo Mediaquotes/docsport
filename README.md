@@ -1,0 +1,119 @@
+# DocsPort
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+
+**Intelligent Python code documentation and analysis tool** with a built-in editor, AST-based analysis, Mermaid.js visualizations, secure code execution, and multilingual UI.
+
+![DocsPort Screenshot](https://via.placeholder.com/800x400?text=DocsPort+Screenshot)
+
+## Features
+
+- **Code Editor** - Monaco-powered editor with syntax highlighting, autocomplete, and keyboard shortcuts (Ctrl+S, F5)
+- **AST Code Analysis** - Automatic extraction of classes, functions, methods, dependencies, and call graphs
+- **Visualization** - Mermaid.js flowcharts and interactive D3.js node-link diagrams
+- **Secure Execution** - Run Python code in an isolated sandbox with timeout protection
+- **Comment System** - Annotate code with comments tied to files, lines, and elements (persisted in SQLite)
+- **Code Metrics** - Cyclomatic complexity, maintainability index, comment ratio, and more
+- **Multilingual UI** - English (default), German, and Spanish — easily extensible
+- **Auto Port Discovery** - Automatically finds a free port (8000-9000) on startup
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/mediaquotes/docsport.git
+cd docsport
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start DocsPort
+python main.py
+```
+
+Open `http://localhost:<port>` in your browser (the port is printed in the terminal).
+
+## Project Structure
+
+```
+docsport/
+├── main.py                  # Entry point
+├── config.py                # Configuration & port management
+├── __init__.py              # Package metadata
+├── requirements.txt         # Python dependencies
+├── start_docsport.bat       # Windows launcher
+├── backend/
+│   ├── app.py               # FastAPI application & routes
+│   ├── analysis.py          # AST-based code analysis
+│   ├── execution.py         # Secure code execution
+│   ├── visualization.py     # Mermaid.js flowchart generation
+│   ├── visual_analyzer.py   # D3.js visualization data
+│   ├── i18n.py              # Backend i18n helper
+│   └── locales/             # Backend translation files
+│       ├── en.json
+│       ├── de.json
+│       └── es.json
+├── frontend/
+│   ├── locales/             # Frontend translation files
+│   │   ├── en.json
+│   │   ├── de.json
+│   │   └── es.json
+│   ├── static/
+│   │   ├── css/main.css     # Stylesheet
+│   │   └── js/
+│   │       ├── main.js      # Main application logic
+│   │       └── i18n.js      # Frontend i18n helper
+│   └── templates/
+│       └── index.html       # Single-page HTML template
+└── data/                    # Auto-created: SQLite DB & config
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check |
+| GET | `/api/files` | List Python files |
+| GET | `/api/files/{path}` | Read file content |
+| POST | `/api/files/{path}` | Save file content |
+| POST | `/api/analyze` | Analyze a file |
+| GET | `/api/analyze/project` | Analyze entire project |
+| GET | `/api/visualization/flowchart` | Generate flowchart |
+| POST | `/api/visualization/analyze` | Visual analysis data |
+| GET | `/api/metrics/{path}` | Code metrics |
+| POST | `/api/execute` | Execute code |
+| GET | `/api/execution/history` | Execution history |
+| POST | `/api/comments` | Create comment |
+| GET | `/api/comments/{path}` | Get comments for file |
+| DELETE | `/api/comments/{id}` | Delete comment |
+
+Full interactive docs available at `/api/docs` (Swagger UI).
+
+## Language Support
+
+DocsPort ships with three languages. Switch via the dropdown in the header.
+
+| Code | Language |
+|------|----------|
+| `en` | English (default) |
+| `de` | German |
+| `es` | Spanish |
+
+To add a new language, see [CONTRIBUTING.md](CONTRIBUTING.md#adding-translations).
+
+## Tech Stack
+
+- **Backend**: [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/)
+- **Frontend**: Vanilla JavaScript + [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- **Visualization**: [Mermaid.js](https://mermaid.js.org/) + [D3.js](https://d3js.org/)
+- **Database**: SQLite (zero config)
+- **Analysis**: Python `ast` module
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[MIT](LICENSE) - Copyright (c) 2025 MediaQuotes

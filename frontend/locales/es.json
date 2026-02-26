@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "DocsPort",
+    "subtitle": "Sistema Inteligente de Documentación y Análisis",
+    "status": {
+      "connected": "Conectado",
+      "disconnected": "Desconectado"
+    },
+    "loading": "Cargando..."
+  },
+  "tabs": {
+    "editor": "Editor de Código",
+    "analysis": "Análisis de Código",
+    "visualization": "Visualización",
+    "execution": "Ejecución de Código",
+    "comments": "Comentarios"
+  },
+  "editor": {
+    "select_file": "Seleccionar archivo...",
+    "refresh": "Actualizar",
+    "save": "Guardar",
+    "analyze": "Analizar",
+    "execute": "Ejecutar",
+    "file_info": "Info del Archivo",
+    "no_file_selected": "Ningún archivo seleccionado",
+    "comments": "Comentarios",
+    "no_comments": "Sin comentarios",
+    "file": "Archivo",
+    "size": "Tamaño",
+    "lines": "Líneas"
+  },
+  "analysis": {
+    "title": "Análisis de Código",
+    "analyze_project": "Analizar proyecto",
+    "files": "Archivos",
+    "classes": "Clases",
+    "functions": "Funciones",
+    "methods": "Métodos",
+    "select_class": "Seleccionar clase...",
+    "select_function": "Seleccionar función...",
+    "select_method": "Seleccionar método...",
+    "run_analysis": "Ejecute un análisis para ver los resultados.",
+    "no_results": "No hay resultados de análisis disponibles.",
+    "no_elements": "No se encontraron elementos de código.",
+    "line": "Línea",
+    "lines_range": "Líneas",
+    "error": "Error"
+  },
+  "visualization": {
+    "title": "Visualización de Código",
+    "generate_flowchart": "Generar diagrama de flujo",
+    "mermaid": "Mermaid",
+    "d3_interactive": "D3 Interactivo",
+    "placeholder": "Genere un diagrama de flujo para visualizar la estructura del código.",
+    "analyze_first": "Analice el código primero para visualizar la estructura"
+  },
+  "execution": {
+    "title": "Ejecución de Código",
+    "run": "Ejecutar código",
+    "clear": "Limpiar salida",
+    "history": "Historial",
+    "output_tab": "Salida",
+    "errors_tab": "Errores",
+    "info_tab": "Info",
+    "placeholder": "Ejecute código para ver la salida.",
+    "success": "Ejecución exitosa",
+    "failed": "Ejecución fallida",
+    "time": "Tiempo de ejecución"
+  },
+  "comments_tab": {
+    "title": "Sistema de Comentarios",
+    "add_comment": "Agregar comentario",
+    "all_files": "Todos los archivos",
+    "all_types": "Todos los tipos",
+    "general": "General",
+    "bug": "Bug",
+    "todo": "TODO",
+    "improvement": "Mejora",
+    "no_comments": "No se encontraron comentarios.",
+    "line": "Línea"
+  },
+  "modal": {
+    "add_comment": "Agregar Comentario",
+    "file": "Archivo:",
+    "line": "Línea (opcional):",
+    "type": "Tipo:",
+    "comment": "Comentario:",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "messages": {
+    "api_error": "Error de API: ",
+    "error_prefix": "Error: ",
+    "success_prefix": "Éxito: ",
+    "file_not_loaded": "No se pudo cargar el archivo",
+    "file_saved": "Archivo guardado exitosamente",
+    "file_not_saved": "No se pudo guardar el archivo",
+    "no_file_to_save": "Ningún archivo seleccionado para guardar",
+    "no_file_to_analyze": "Ningún archivo seleccionado para analizar",
+    "file_analyzed": "Archivo analizado exitosamente",
+    "analysis_failed": "Análisis fallido",
+    "project_analysis_failed": "Análisis del proyecto fallido",
+    "no_code_to_execute": "No se ingresó código para ejecutar",
+    "execution_editor_unavailable": "Editor de ejecución no disponible",
+    "no_code_selected": "No se seleccionó código",
+    "select_code_to_execute": "Por favor seleccione código para ejecutar",
+    "execution_failed": "Ejecución de código fallida",
+    "history_load_failed": "No se pudo cargar el historial de ejecución",
+    "flowchart_failed": "No se pudo generar el diagrama de flujo",
+    "comment_added": "Comentario agregado exitosamente",
+    "comment_not_added": "No se pudo agregar el comentario",
+    "timeout": "Ejecución interrumpida después de {seconds} segundos"
+  }
+}

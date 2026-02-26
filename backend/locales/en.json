@@ -1,0 +1,18 @@
+{
+  "comment_created": "Comment created successfully",
+  "comment_deleted": "Comment deleted successfully",
+  "file_not_found": "File not found",
+  "file_saved": "File saved successfully",
+  "no_python_files": "No Python files found",
+  "analysis_error": "Analysis error",
+  "execution_error": "Execution error",
+  "unsupported_type": "Unsupported execution type: {type}",
+  "code_forbidden": "Code contains forbidden operations",
+  "timeout": "Execution timed out after {seconds} seconds",
+  "no_analysis_data": "No analysis data found. Please run a project analysis first.",
+  "no_analysis_for_file": "No analysis data found for {file}.",
+  "no_classes_found": "No classes found.",
+  "session_not_found": "Session not found",
+  "session_deleted": "Session deleted",
+  "snippet_saved": "Snippet saved successfully"
+}

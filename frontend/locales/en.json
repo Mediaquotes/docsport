@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "DocsPort",
+    "subtitle": "Intelligent Documentation & Analysis System",
+    "status": {
+      "connected": "Connected",
+      "disconnected": "Disconnected"
+    },
+    "loading": "Loading..."
+  },
+  "tabs": {
+    "editor": "Code Editor",
+    "analysis": "Code Analysis",
+    "visualization": "Visualization",
+    "execution": "Code Execution",
+    "comments": "Comments"
+  },
+  "editor": {
+    "select_file": "Select file...",
+    "refresh": "Refresh",
+    "save": "Save",
+    "analyze": "Analyze",
+    "execute": "Execute",
+    "file_info": "File Info",
+    "no_file_selected": "No file selected",
+    "comments": "Comments",
+    "no_comments": "No comments",
+    "file": "File",
+    "size": "Size",
+    "lines": "Lines"
+  },
+  "analysis": {
+    "title": "Code Analysis",
+    "analyze_project": "Analyze project",
+    "files": "Files",
+    "classes": "Classes",
+    "functions": "Functions",
+    "methods": "Methods",
+    "select_class": "Select class...",
+    "select_function": "Select function...",
+    "select_method": "Select method...",
+    "run_analysis": "Run an analysis to see results.",
+    "no_results": "No analysis results available.",
+    "no_elements": "No code elements found.",
+    "line": "Line",
+    "lines_range": "Lines",
+    "error": "Error"
+  },
+  "visualization": {
+    "title": "Code Visualization",
+    "generate_flowchart": "Generate flowchart",
+    "mermaid": "Mermaid",
+    "d3_interactive": "D3 Interactive",
+    "placeholder": "Generate a flowchart to visualize the code structure.",
+    "analyze_first": "Analyze the code first to visualize the structure"
+  },
+  "execution": {
+    "title": "Code Execution",
+    "run": "Run code",
+    "clear": "Clear output",
+    "history": "History",
+    "output_tab": "Output",
+    "errors_tab": "Errors",
+    "info_tab": "Info",
+    "placeholder": "Run code to see the output.",
+    "success": "Execution successful",
+    "failed": "Execution failed",
+    "time": "Execution time"
+  },
+  "comments_tab": {
+    "title": "Comment System",
+    "add_comment": "Add comment",
+    "all_files": "All files",
+    "all_types": "All types",
+    "general": "General",
+    "bug": "Bug",
+    "todo": "TODO",
+    "improvement": "Improvement",
+    "no_comments": "No comments found.",
+    "line": "Line"
+  },
+  "modal": {
+    "add_comment": "Add Comment",
+    "file": "File:",
+    "line": "Line (optional):",
+    "type": "Type:",
+    "comment": "Comment:",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "api_error": "API error: ",
+    "error_prefix": "Error: ",
+    "success_prefix": "Success: ",
+    "file_not_loaded": "Could not load file",
+    "file_saved": "File saved successfully",
+    "file_not_saved": "Could not save file",
+    "no_file_to_save": "No file selected to save",
+    "no_file_to_analyze": "No file selected to analyze",
+    "file_analyzed": "File analyzed successfully",
+    "analysis_failed": "Analysis failed",
+    "project_analysis_failed": "Project analysis failed",
+    "no_code_to_execute": "No code entered to execute",
+    "execution_editor_unavailable": "Execution editor not available",
+    "no_code_selected": "No code selected",
+    "select_code_to_execute": "Please select code to execute",
+    "execution_failed": "Code execution failed",
+    "history_load_failed": "Could not load execution history",
+    "flowchart_failed": "Could not generate flowchart",
+    "comment_added": "Comment added successfully",
+    "comment_not_added": "Could not add comment",
+    "timeout": "Execution timed out after {seconds} seconds"
+  }
+}

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocsPort - Intelligent Documentation & Analysis System</title>
+
+    <!-- CSS Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+
+    <!-- Monaco Editor -->
+    <script src="https://unpkg.com/monaco-editor@0.44.0/min/vs/loader.js"></script>
+
+    <!-- Mermaid for Flowcharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+
+    <!-- D3.js for enhanced visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-file-code"></i> DocsPort</h1>
+                <p data-i18n="app.subtitle">Intelligent Documentation & Analysis System</p>
+                <div class="header-info">
+                    <select id="locale-switcher" onchange="switchLocale(this.value)" class="locale-switcher">
+                        <option value="en">EN</option>
+                        <option value="de">DE</option>
+                        <option value="es">ES</option>
+                    </select>
+                    <span class="port-info">Port: {{ config.port }}</span>
+                    <span class="status-indicator" id="status-indicator">
+                        <i class="fas fa-circle"></i> <span data-i18n="app.status.connected">Connected</span>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-button active" onclick="showTab('editor')">
+                <i class="fas fa-code"></i> <span data-i18n="tabs.editor">Code Editor</span>
+            </button>
+            <button class="tab-button" onclick="showTab('analysis')">
+                <i class="fas fa-search"></i> <span data-i18n="tabs.analysis">Code Analysis</span>
+            </button>
+            <button class="tab-button" onclick="showTab('visualization')">
+                <i class="fas fa-project-diagram"></i> <span data-i18n="tabs.visualization">Visualization</span>
+            </button>
+            <button class="tab-button" onclick="showTab('execution')">
+                <i class="fas fa-play"></i> <span data-i18n="tabs.execution">Code Execution</span>
+            </button>
+            <button class="tab-button" onclick="showTab('comments')">
+                <i class="fas fa-comments"></i> <span data-i18n="tabs.comments">Comments</span>
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Editor Tab -->
+            <div id="editor-tab" class="tab-pane active">
+                <div class="editor-container">
+                    <div class="editor-header">
+                        <div class="file-selector">
+                            <select id="file-select" onchange="loadFile()">
+                                <option value="" data-i18n="editor.select_file">Select file...</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="refreshFileList()">
+                                <i class="fas fa-refresh"></i> <span data-i18n="editor.refresh">Refresh</span>
+                            </button>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn btn-success" onclick="saveFile()">
+                                <i class="fas fa-save"></i> <span data-i18n="editor.save">Save</span>
+                            </button>
+                            <button class="btn btn-info" onclick="analyzeCurrentFile()">
+                                <i class="fas fa-search"></i> <span data-i18n="editor.analyze">Analyze</span>
+                            </button>
+                            <button class="btn btn-warning" onclick="executeSelectedCode()">
+                                <i class="fas fa-play"></i> <span data-i18n="editor.execute">Execute</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-main">
+                        <div class="editor-workspace">
+                            <div id="monaco-editor" style="height: 100%; width: 100%;"></div>
+                        </div>
+                        <div class="editor-sidebar">
+                            <div class="sidebar-section">
+                                <h3><i class="fas fa-info-circle"></i> <span data-i18n="editor.file_info">File Info</span></h3>
+                                <div id="file-info">
+                                    <p data-i18n="editor.no_file_selected">No file selected</p>
+                                </div>
+                            </div>
+                            <div class="sidebar-section">
+                                <h3><i class="fas fa-comments"></i> <span data-i18n="editor.comments">Comments</span></h3>
+                                <div id="file-comments">
+                                    <p data-i18n="editor.no_comments">No comments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Tab -->
+            <div id="analysis-tab" class="tab-pane">
+                <div class="analysis-container">
+                    <div class="analysis-header">
+                        <h2><i class="fas fa-search"></i> <span data-i18n="analysis.title">Code Analysis</span></h2>
+                        <button class="btn btn-primary" onclick="analyzeProject()">
+                            <i class="fas fa-project-diagram"></i> <span data-i18n="analysis.analyze_project">Analyze project</span>
+                        </button>
+                    </div>
+                    <div class="analysis-content">
+                        <div class="analysis-stats" id="analysis-stats">
+                            <div class="stat-card">
+                                <h3 data-i18n="analysis.files">Files</h3>
+                                <span class="stat-number" id="total-files">0</span>
+                            </div>
+                            <div class="stat-card">
+                                <h3 data-i18n="analysis.classes">Classes</h3>
+                                <span class="stat-number" id="total-classes">0</span>
+                            </div>
+                            <div class="stat-card">
+                                <h3 data-i18n="analysis.functions">Functions</h3>
+                                <span class="stat-number" id="total-functions">0</span>
+                            </div>
+                            <div class="stat-card">
+                                <h3 data-i18n="analysis.methods">Methods</h3>
+                                <span class="stat-number" id="total-methods">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Visual Analyzer Dropdowns -->
+                        <div class="visual-analyzer-controls">
+                            <div class="dropdown-container">
+                                <label for="class-dropdown" data-i18n="analysis.classes">Classes:</label>
+                                <select id="class-dropdown" onchange="jumpToCode(this.value)">
+                                    <option value="" data-i18n="analysis.select_class">Select class...</option>
+                                </select>
+                            </div>
+                            <div class="dropdown-container">
+                                <label for="function-dropdown" data-i18n="analysis.functions">Functions:</label>
+                                <select id="function-dropdown" onchange="jumpToCode(this.value)">
+                                    <option value="" data-i18n="analysis.select_function">Select function...</option>
+                                </select>
+                            </div>
+                            <div class="dropdown-container">
+                                <label for="method-dropdown" data-i18n="analysis.methods">Methods:</label>
+                                <select id="method-dropdown" onchange="jumpToCode(this.value)">
+                                    <option value="" data-i18n="analysis.select_method">Select method...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="analysis-results" id="analysis-results">
+                            <p class="placeholder" data-i18n="analysis.run_analysis">Run an analysis to see results.</p>
+                        </div>
+                        <div class="code-structure" id="code-structure">
+                            <h3>Code Structure</h3>
+                            <div class="structure-tree" id="structure-tree"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Tab -->
+            <div id="visualization-tab" class="tab-pane">
+                <div class="visualization-container">
+                    <div class="visualization-header">
+                        <h2><i class="fas fa-project-diagram"></i> <span data-i18n="visualization.title">Code Visualization</span></h2>
+                        <button class="btn btn-primary" onclick="generateFlowchart()">
+                            <i class="fas fa-sitemap"></i> <span data-i18n="visualization.generate_flowchart">Generate flowchart</span>
+                        </button>
+                    </div>
+                    <div class="visualization-content">
+                        <div class="visualization-controls">
+                            <button class="btn btn-secondary" onclick="switchVisualization('mermaid')">
+                                <i class="fas fa-sitemap"></i> <span data-i18n="visualization.mermaid">Mermaid</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="switchVisualization('d3')">
+                                <i class="fas fa-project-diagram"></i> <span data-i18n="visualization.d3_interactive">D3 Interactive</span>
+                            </button>
+                        </div>
+                        <div id="flowchart-container" class="flowchart-container">
+                            <p class="placeholder" data-i18n="visualization.placeholder">Generate a flowchart to visualize the code structure.</p>
+                        </div>
+                        <div id="d3-visualization" class="d3-container" style="display: none;">
+                            <svg id="d3-svg" width="100%" height="600"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Tab -->
+            <div id="execution-tab" class="tab-pane">
+                <div class="execution-container">
+                    <div class="execution-header">
+                        <h2><i class="fas fa-play"></i> <span data-i18n="execution.title">Code Execution</span></h2>
+                        <div class="execution-controls">
+                            <button class="btn btn-success" onclick="executeCode()">
+                                <i class="fas fa-play"></i> <span data-i18n="execution.run">Run code</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearExecutionOutput()">
+                                <i class="fas fa-eraser"></i> <span data-i18n="execution.clear">Clear output</span>
+                            </button>
+                            <button class="btn btn-info" onclick="showExecutionHistory()">
+                                <i class="fas fa-history"></i> <span data-i18n="execution.history">History</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="execution-content">
+                        <div class="execution-input">
+                            <div id="execution-monaco" style="height: 300px; border: 1px solid #ccc;"></div>
+                        </div>
+                        <div class="execution-output">
+                            <div class="output-tabs">
+                                <button class="output-tab active" onclick="showOutput('stdout')" data-i18n="execution.output_tab">Output</button>
+                                <button class="output-tab" onclick="showOutput('stderr')" data-i18n="execution.errors_tab">Errors</button>
+                                <button class="output-tab" onclick="showOutput('info')" data-i18n="execution.info_tab">Info</button>
+                            </div>
+                            <div id="execution-result" class="output-content">
+                                <p class="placeholder" data-i18n="execution.placeholder">Run code to see the output.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Tab -->
+            <div id="comments-tab" class="tab-pane">
+                <div class="comments-container">
+                    <div class="comments-header">
+                        <h2><i class="fas fa-comments"></i> <span data-i18n="comments_tab.title">Comment System</span></h2>
+                        <button class="btn btn-primary" onclick="showAddCommentDialog()">
+                            <i class="fas fa-plus"></i> <span data-i18n="comments_tab.add_comment">Add comment</span>
+                        </button>
+                    </div>
+                    <div class="comments-content">
+                        <div class="comments-filters">
+                            <select id="comment-file-filter" onchange="filterComments()">
+                                <option value="" data-i18n="comments_tab.all_files">All files</option>
+                            </select>
+                            <select id="comment-type-filter" onchange="filterComments()">
+                                <option value="" data-i18n="comments_tab.all_types">All types</option>
+                                <option value="general" data-i18n="comments_tab.general">General</option>
+                                <option value="bug">Bug</option>
+                                <option value="todo">TODO</option>
+                                <option value="improvement" data-i18n="comments_tab.improvement">Improvement</option>
+                            </select>
+                        </div>
+                        <div id="comments-list" class="comments-list">
+                            <p class="placeholder" data-i18n="comments_tab.no_comments">No comments found.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Comments -->
+    <div id="comment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="modal.add_comment">Add Comment</h3>
+                <button class="modal-close" onclick="closeCommentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label data-i18n="modal.file">File:</label>
+                        <input type="text" id="comment-file" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="modal.line">Line (optional):</label>
+                        <input type="number" id="comment-line" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="modal.type">Type:</label>
+                        <select id="comment-type">
+                            <option value="general" data-i18n="comments_tab.general">General</option>
+                            <option value="bug">Bug</option>
+                            <option value="todo">TODO</option>
+                            <option value="improvement" data-i18n="comments_tab.improvement">Improvement</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="modal.comment">Comment:</label>
+                        <textarea id="comment-text" rows="4" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> <span data-i18n="modal.save">Save</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeCommentModal()">
+                            <span data-i18n="modal.cancel">Cancel</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p data-i18n="app.loading">Loading...</p>
+    </div>
+
+    <!-- i18n (must load before main.js) -->
+    <script src="/static/js/i18n.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/main.js"></script>
+
+    <script>
+        // Initialize i18n first, then DocsPort
+        document.addEventListener('DOMContentLoaded', async function() {
+            await i18n.init();
+            // Sync locale switcher with detected/saved locale
+            const switcher = document.getElementById('locale-switcher');
+            if (switcher) switcher.value = i18n.locale;
+            DocsPort.init();
+        });
+
+        function switchLocale(locale) {
+            i18n.setLocale(locale);
+        }
+    </script>
+</body>
+</html>

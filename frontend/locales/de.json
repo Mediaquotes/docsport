@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "DocsPort",
+    "subtitle": "Intelligentes Dokumentations- und Analyse-System",
+    "status": {
+      "connected": "Verbunden",
+      "disconnected": "Getrennt"
+    },
+    "loading": "Laden..."
+  },
+  "tabs": {
+    "editor": "Code-Editor",
+    "analysis": "Code-Analyse",
+    "visualization": "Visualisierung",
+    "execution": "Code-Ausführung",
+    "comments": "Kommentare"
+  },
+  "editor": {
+    "select_file": "Datei auswählen...",
+    "refresh": "Aktualisieren",
+    "save": "Speichern",
+    "analyze": "Analysieren",
+    "execute": "Ausführen",
+    "file_info": "Datei-Info",
+    "no_file_selected": "Keine Datei ausgewählt",
+    "comments": "Kommentare",
+    "no_comments": "Keine Kommentare",
+    "file": "Datei",
+    "size": "Größe",
+    "lines": "Zeilen"
+  },
+  "analysis": {
+    "title": "Code-Analyse",
+    "analyze_project": "Projekt analysieren",
+    "files": "Dateien",
+    "classes": "Klassen",
+    "functions": "Funktionen",
+    "methods": "Methoden",
+    "select_class": "Klasse auswählen...",
+    "select_function": "Funktion auswählen...",
+    "select_method": "Methode auswählen...",
+    "run_analysis": "Führen Sie eine Analyse durch, um Ergebnisse zu sehen.",
+    "no_results": "Keine Analyseergebnisse verfügbar.",
+    "no_elements": "Keine Code-Elemente gefunden.",
+    "line": "Zeile",
+    "lines_range": "Zeilen",
+    "error": "Fehler"
+  },
+  "visualization": {
+    "title": "Code-Visualisierung",
+    "generate_flowchart": "Flowchart generieren",
+    "mermaid": "Mermaid",
+    "d3_interactive": "D3 Interaktiv",
+    "placeholder": "Generieren Sie ein Flowchart, um die Code-Struktur zu visualisieren.",
+    "analyze_first": "Analysieren Sie zuerst den Code, um die Struktur zu visualisieren"
+  },
+  "execution": {
+    "title": "Code-Ausführung",
+    "run": "Code ausführen",
+    "clear": "Ausgabe löschen",
+    "history": "Historie",
+    "output_tab": "Ausgabe",
+    "errors_tab": "Fehler",
+    "info_tab": "Info",
+    "placeholder": "Führen Sie Code aus, um die Ausgabe zu sehen.",
+    "success": "Ausführung erfolgreich",
+    "failed": "Ausführung fehlgeschlagen",
+    "time": "Ausführungszeit"
+  },
+  "comments_tab": {
+    "title": "Kommentar-System",
+    "add_comment": "Kommentar hinzufügen",
+    "all_files": "Alle Dateien",
+    "all_types": "Alle Typen",
+    "general": "Allgemein",
+    "bug": "Bug",
+    "todo": "TODO",
+    "improvement": "Verbesserung",
+    "no_comments": "Keine Kommentare gefunden.",
+    "line": "Zeile"
+  },
+  "modal": {
+    "add_comment": "Kommentar hinzufügen",
+    "file": "Datei:",
+    "line": "Zeile (optional):",
+    "type": "Typ:",
+    "comment": "Kommentar:",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "messages": {
+    "api_error": "API-Fehler: ",
+    "error_prefix": "Fehler: ",
+    "success_prefix": "Erfolg: ",
+    "file_not_loaded": "Datei konnte nicht geladen werden",
+    "file_saved": "Datei erfolgreich gespeichert",
+    "file_not_saved": "Datei konnte nicht gespeichert werden",
+    "no_file_to_save": "Keine Datei zum Speichern ausgewählt",
+    "no_file_to_analyze": "Keine Datei zum Analysieren ausgewählt",
+    "file_analyzed": "Datei erfolgreich analysiert",
+    "analysis_failed": "Analyse fehlgeschlagen",
+    "project_analysis_failed": "Projekt-Analyse fehlgeschlagen",
+    "no_code_to_execute": "Kein Code zum Ausführen eingegeben",
+    "execution_editor_unavailable": "Ausführungs-Editor nicht verfügbar",
+    "no_code_selected": "Kein Code ausgewählt",
+    "select_code_to_execute": "Bitte wählen Sie Code zur Ausführung aus",
+    "execution_failed": "Code-Ausführung fehlgeschlagen",
+    "history_load_failed": "Ausführungshistorie konnte nicht geladen werden",
+    "flowchart_failed": "Flowchart konnte nicht generiert werden",
+    "comment_added": "Kommentar erfolgreich hinzugefügt",
+    "comment_not_added": "Kommentar konnte nicht hinzugefügt werden",
+    "timeout": "Ausführung nach {seconds} Sekunden abgebrochen"
+  }
+}
