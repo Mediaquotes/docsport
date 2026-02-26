@@ -6,6 +6,7 @@ Starts the DocsPort system with automatic port allocation and configuration.
 
 import sys
 import os
+import argparse
 from pathlib import Path
 
 # Add current directory to path
@@ -17,29 +18,25 @@ from backend.app import DocsPortApp
 
 def main():
     """Main entry point for DocsPort."""
+    parser = argparse.ArgumentParser(description="DocsPort - Intelligent Documentation & Analysis System")
+    parser.add_argument("-p", "--port", type=int, default=None,
+                        help="Port to run on (default: auto-detect free port)")
+    args = parser.parse_args()
+
+    # Priority: CLI arg > env var > auto-discovery
+    port = args.port or int(os.environ.get("DOCSPORT_PORT", 0)) or None
 
     print("=" * 60)
     print("DOCSPORT - INTELLIGENT DOCUMENTATION & ANALYSIS SYSTEM")
     print("=" * 60)
-    print("Features:")
-    print("- Automatic port allocation")
-    print("- Code editor with syntax highlighting")
-    print("- Code analysis and visualization")
-    print("- Secure code execution")
-    print("- Comment system")
-    print("- Mermaid.js flowcharts")
-    print("=" * 60)
 
     try:
-        # Initialize DocsPort
-        app = DocsPortApp()
+        app = DocsPortApp(port=port)
 
         print(f"\nDocsPort running on: http://{app.config.host}:{app.config.port}")
         print(f"API Documentation: http://{app.config.host}:{app.config.port}/api/docs")
-        print(f"Instance ID: {app.config.instance_id}")
         print("\nPress Ctrl+C to stop...")
 
-        # Start the server
         app.run()
 
     except KeyboardInterrupt:

@@ -18,26 +18,48 @@
 - **Multilingual UI** - English (default), German, and Spanish — easily extensible
 - **Auto Port Discovery** - Automatically finds a free port (8000-9000) on startup
 
-## Quick Start
+## Installation
 
-**Prerequisites:** Python 3.9 or higher
+**Prerequisites:** Python 3.9 or higher. No installer needed — just clone or download.
 
 ```bash
-# Clone the repository
+# Option A: Clone with git
 git clone https://github.com/mediaquotes/docsport.git
+
+# Option B: Download ZIP from GitHub and extract it
+```
+
+```bash
 cd docsport
-
-# Install dependencies
 pip install -r requirements.txt
+```
 
-# Start DocsPort
+On Windows you can also double-click `start_docsport.bat`.
+
+## Usage
+
+```bash
+# Start with automatic port discovery
+python main.py
+
+# Start on a specific port
+python main.py --port 9090
+```
+
+You can also set the port via environment variable:
+
+```bash
+export DOCSPORT_PORT=9090   # Linux/macOS
+set DOCSPORT_PORT=9090      # Windows
 python main.py
 ```
 
-DocsPort will automatically find a free port and print the URL in the terminal:
+**Port priority:** `--port` flag > `DOCSPORT_PORT` env var > auto-discovery (scans 8500–9500).
+
+DocsPort prints the URL when it starts:
 
 ```
-DocsPort running on: http://127.0.0.1:8000
+DocsPort running on: http://127.0.0.1:8500
 ```
 
 Open that URL in your browser. You'll see a web UI where you can:

@@ -45,7 +45,7 @@ class PortManager:
         except:
             return False
 
-    def find_free_port(self, start_port: int = 8000, end_port: int = 9000) -> int:
+    def find_free_port(self, start_port: int = 8500, end_port: int = 9500) -> int:
         """Find a free port in the given range."""
         for port in range(start_port, end_port + 1):
             if self.is_port_free(port):
@@ -112,8 +112,25 @@ class PortManager:
         with open(self.config_file, 'w', encoding='utf-8') as f:
             json.dump(asdict(config), f, indent=2, ensure_ascii=False)
 
-    def get_or_create_config(self) -> DocsPortConfig:
-        """Return existing configuration or create a new one."""
+    def get_or_create_config(self, preferred_port: int = None) -> DocsPortConfig:
+        """Return existing configuration or create a new one.
+
+        Args:
+            preferred_port: If set, use this port instead of auto-discovery.
+        """
+        if preferred_port:
+            if not self.is_port_free(preferred_port):
+                raise RuntimeError(f"Port {preferred_port} is already in use")
+            print(f"Using requested port {preferred_port}")
+            config = DocsPortConfig(
+                port=preferred_port,
+                instance_id=f"docsport_{preferred_port}_{int(datetime.now().timestamp())}",
+                created_at=datetime.now().isoformat(),
+                last_used=datetime.now().isoformat()
+            )
+            self.save_config(config)
+            return config
+
         existing_config = self.detect_existing_docsport()
 
         if existing_config:
@@ -205,12 +222,12 @@ class DocsPortInitializer:
         self.db_manager = DatabaseManager()
         self.config = None
 
-    def initialize(self) -> DocsPortConfig:
+    def initialize(self, preferred_port: int = None) -> DocsPortConfig:
         """Initialize the DocsPort system."""
         print("DocsPort system initializing...")
 
         # Load or create configuration
-        self.config = self.port_manager.get_or_create_config()
+        self.config = self.port_manager.get_or_create_config(preferred_port)
 
         # Initialize database
         self.db_manager.init_database()

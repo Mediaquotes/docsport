@@ -53,9 +53,9 @@ class AnalysisRequest(BaseModel):
 class DocsPortApp:
     """DocsPort main application."""
 
-    def __init__(self):
+    def __init__(self, port: int = None):
         self.initializer = DocsPortInitializer()
-        self.config = self.initializer.initialize()
+        self.config = self.initializer.initialize(preferred_port=port)
         self.db_manager = DatabaseManager()
         self.app = self.create_app()
 
