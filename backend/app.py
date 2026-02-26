@@ -21,7 +21,7 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # DocsPort imports
 sys.path.append(str(Path(__file__).parent.parent))
@@ -44,7 +44,7 @@ class CommentRequest(BaseModel):
 class CodeExecutionRequest(BaseModel):
     code: str
     execution_type: str = "python"
-    timeout: int = 30
+    timeout: int = Field(default=30, ge=1, le=60)
 
 class AnalysisRequest(BaseModel):
     file_path: str
@@ -63,6 +63,17 @@ class DocsPortApp:
         """Detect locale from request Accept-Language header."""
         return detect_locale(request.headers.get("accept-language"))
 
+    def _safe_path(self, file_path: str) -> Path:
+        """Resolve a file path and ensure it stays within the project directory.
+
+        Raises HTTPException 403 if the path escapes the project root.
+        """
+        project_root = Path.cwd().resolve()
+        resolved = (project_root / file_path).resolve()
+        if not str(resolved).startswith(str(project_root)):
+            raise HTTPException(status_code=403, detail="Access denied: path outside project directory")
+        return resolved
+
     def create_app(self) -> FastAPI:
         """Create the FastAPI application."""
         app = FastAPI(
@@ -73,10 +84,10 @@ class DocsPortApp:
             redoc_url="/api/redoc"
         )
 
-        # CORS Middleware
+        # CORS Middleware — restrict to localhost only
         app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
@@ -209,10 +220,13 @@ class DocsPortApp:
         async def analyze_file(request_body: AnalysisRequest):
             """Analyze a Python file."""
             try:
+                safe = self._safe_path(request_body.file_path)
                 analyzer = PythonCodeAnalyzer(self.db_manager)
-                analysis = analyzer.analyze_file(request_body.file_path, request_body.force_refresh)
+                analysis = analyzer.analyze_file(str(safe), request_body.force_refresh)
                 return analysis
 
+            except HTTPException:
+                raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
 
@@ -256,10 +270,13 @@ class DocsPortApp:
         async def analyze_for_visualization(request_body: AnalysisRequest):
             """Analyze a file for visual representation."""
             try:
+                safe = self._safe_path(request_body.file_path)
                 visual_analyzer = VisualCodeAnalyzer(self.db_manager)
-                analysis = visual_analyzer.analyze_for_visualization(request_body.file_path)
+                analysis = visual_analyzer.analyze_for_visualization(str(safe))
                 return analysis
 
+            except HTTPException:
+                raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
 
@@ -267,10 +284,13 @@ class DocsPortApp:
         async def get_code_metrics(file_path: str):
             """Return advanced code metrics."""
             try:
+                safe = self._safe_path(file_path)
                 visual_analyzer = VisualCodeAnalyzer(self.db_manager)
-                metrics = visual_analyzer.get_code_metrics(file_path)
+                metrics = visual_analyzer.get_code_metrics(str(safe))
                 return metrics
 
+            except HTTPException:
+                raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
 
@@ -348,7 +368,7 @@ class DocsPortApp:
             """Return the content of a file."""
             locale = self._locale(request)
             try:
-                file_path_obj = Path(file_path)
+                file_path_obj = self._safe_path(file_path)
 
                 if not file_path_obj.exists():
                     raise HTTPException(status_code=404, detail=t("file_not_found", locale))
@@ -373,7 +393,7 @@ class DocsPortApp:
             """Save file content."""
             locale = self._locale(request)
             try:
-                file_path_obj = Path(file_path)
+                file_path_obj = self._safe_path(file_path)
 
                 # Create backup
                 if file_path_obj.exists():
@@ -386,6 +406,8 @@ class DocsPortApp:
 
                 return {"message": t("file_saved", locale)}
 
+            except HTTPException:
+                raise
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
 

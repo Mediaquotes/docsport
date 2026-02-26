@@ -85,55 +85,52 @@ class SecureCodeExecutor:
             return result.to_dict()
 
     def _validate_code(self, code: str) -> bool:
-        """Validate code for security."""
-        dangerous_operations = [
-            "import os",
-            "import sys",
-            "import subprocess",
-            "import shutil",
-            "import socket",
-            "import urllib",
-            "import requests",
-            "from os import",
-            "from sys import",
-            "from subprocess import",
-            "from shutil import",
-            "from socket import",
-            "from urllib import",
-            "from requests import",
-            "exec(",
-            "eval(",
-            "compile(",
-            "__import__(",
-            "open(",
-            "file(",
-            "input(",
-            "raw_input(",
-            "exit(",
-            "quit(",
-            "globals(",
-            "locals(",
-            "vars(",
-            "dir(",
-            "getattr(",
-            "setattr(",
-            "delattr(",
-            "hasattr(",
-            "reload(",
-            "importlib",
-            "pickle",
-            "cPickle",
-            "marshal",
-            "tempfile",
-            "pathlib",
-            "glob",
-            "fnmatch"
+        """Validate code for security.
+
+        Uses a blacklist approach on normalized code. This is NOT a full sandbox —
+        it prevents common dangerous patterns but cannot guarantee complete isolation.
+        Code runs in a subprocess with timeout, which limits blast radius.
+        """
+        import re
+
+        # Normalize whitespace: collapse runs of spaces/tabs between tokens
+        code_normalized = re.sub(r'[ \t]+', ' ', code.lower())
+
+        # Dangerous module imports
+        dangerous_modules = [
+            "os", "sys", "subprocess", "shutil", "socket", "urllib",
+            "requests", "importlib", "pickle", "cpickle", "marshal",
+            "tempfile", "pathlib", "glob", "fnmatch", "ctypes",
+            "multiprocessing", "signal", "pty", "code", "codeop",
+            "webbrowser", "http", "ftplib", "smtplib", "telnetlib",
         ]
 
-        code_lower = code.lower()
+        for mod in dangerous_modules:
+            if re.search(rf'\bimport\s+{mod}\b', code_normalized):
+                return False
+            if re.search(rf'\bfrom\s+{mod}\b', code_normalized):
+                return False
 
-        for operation in dangerous_operations:
-            if operation in code_lower:
+        # Dangerous builtins and functions
+        dangerous_calls = [
+            "exec(", "eval(", "compile(", "__import__(", "open(",
+            "file(", "input(", "raw_input(", "exit(", "quit(",
+            "globals(", "locals(", "vars(", "getattr(", "setattr(",
+            "delattr(", "hasattr(", "reload(", "breakpoint(",
+        ]
+
+        for call in dangerous_calls:
+            if call in code_normalized:
+                return False
+
+        # Dangerous dunder attributes (sandbox escape vectors)
+        dangerous_attrs = [
+            "__builtins__", "__subclasses__", "__bases__", "__class__",
+            "__mro__", "__globals__", "__code__", "__import__",
+        ]
+
+        for attr in dangerous_attrs:
+            if attr in code_normalized:
                 return False
 
         return True

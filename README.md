@@ -148,6 +148,15 @@ To add a new language, see [CONTRIBUTING.md](CONTRIBUTING.md#adding-translations
 - **Database**: SQLite (zero config)
 - **Analysis**: Python `ast` module
 
+## Security
+
+DocsPort is designed as a **local development tool**. It binds to `127.0.0.1` (localhost only) by default and restricts CORS to localhost origins.
+
+- **File access** is restricted to the current working directory — path traversal is blocked
+- **Code execution** runs in an isolated subprocess with a 60-second timeout and a blocklist for dangerous operations
+- **Do not** expose DocsPort to the public internet or untrusted networks
+- The code execution sandbox is best-effort, not a full isolation layer — only run code you trust
+
 ## Contributing
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
