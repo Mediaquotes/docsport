@@ -627,12 +627,13 @@ class DocsPort {
         }
 
         try {
+            const timeout = parseInt(document.getElementById('execution-timeout')?.value || '30');
             const response = await this.apiRequest('/api/execute', {
                 method: 'POST',
                 body: JSON.stringify({
                     code: code,
                     execution_type: 'python',
-                    timeout: 30
+                    timeout: timeout
                 })
             });
 
@@ -657,12 +658,13 @@ class DocsPort {
         }
 
         try {
+            const timeout = parseInt(document.getElementById('execution-timeout')?.value || '30');
             const response = await this.apiRequest('/api/execute', {
                 method: 'POST',
                 body: JSON.stringify({
                     code: selectedText,
                     execution_type: 'python',
-                    timeout: 30
+                    timeout: timeout
                 })
             });
 

@@ -58,6 +58,7 @@
     "title": "Ejecución de Código",
     "run": "Ejecutar código",
     "clear": "Limpiar salida",
+    "timeout": "Tiempo límite",
     "history": "Historial",
     "output_tab": "Salida",
     "errors_tab": "Errores",

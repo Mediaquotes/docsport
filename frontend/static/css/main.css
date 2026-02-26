@@ -16,6 +16,23 @@
     background: white;
 }
 
+/* Execution Timeout Selector */
+.timeout-label {
+    color: white;
+    font-size: 0.85rem;
+    margin: 0 0.3rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.timeout-select {
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+}
+
 /* CSS Variables */
 :root {
     --primary-color: #007bff;

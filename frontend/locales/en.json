@@ -58,6 +58,7 @@
     "title": "Code Execution",
     "run": "Run code",
     "clear": "Clear output",
+    "timeout": "Timeout",
     "history": "History",
     "output_tab": "Output",
     "errors_tab": "Errors",

@@ -205,6 +205,15 @@
                             <button class="btn btn-success" onclick="executeCode()">
                                 <i class="fas fa-play"></i> <span data-i18n="execution.run">Run code</span>
                             </button>
+                            <label for="execution-timeout" class="timeout-label">
+                                <span data-i18n="execution.timeout">Timeout</span>:
+                            </label>
+                            <select id="execution-timeout" class="timeout-select">
+                                <option value="5">5s</option>
+                                <option value="10">10s</option>
+                                <option value="30" selected>30s</option>
+                                <option value="60">60s</option>
+                            </select>
                             <button class="btn btn-secondary" onclick="clearExecutionOutput()">
                                 <i class="fas fa-eraser"></i> <span data-i18n="execution.clear">Clear output</span>
                             </button>
