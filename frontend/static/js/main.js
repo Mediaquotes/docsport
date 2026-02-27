@@ -15,6 +15,7 @@ class DocsPort {
         this.currentTab = 'editor';
         this.codeStructure = null;
         this.d3Visualization = null;
+        this._dirty = false;
 
         // Initialize mermaid for flowcharts
         mermaid.initialize({
@@ -228,11 +229,31 @@ class DocsPort {
     }
 
     showError(message) {
-        alert(i18n.t('messages.error_prefix') + message);
+        this._showToast(i18n.t('messages.error_prefix') + message, 'error');
     }
 
     showSuccess(message) {
-        alert(i18n.t('messages.success_prefix') + message);
+        this._showToast(message, 'success');
+    }
+
+    _showToast(message, type = 'info') {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        toast.addEventListener('click', () => toast.remove());
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('toast-fade-out');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
     }
 
     /**
@@ -312,6 +333,7 @@ class DocsPort {
                 this.monacoEditor.setValue(response.content);
             }
 
+            this._dirty = false;
             this.updateFileInfo(response);
             this.loadFileComments(filePath);
 
@@ -372,6 +394,7 @@ class DocsPort {
                 throw new Error('Save failed');
             }
 
+            this._clearDirty();
             this.showSuccess(i18n.t('messages.file_saved'));
 
         } catch (error) {
@@ -381,8 +404,24 @@ class DocsPort {
     }
 
     onCodeChange() {
-        if (this.currentFile) {
-            // Could add dirty indicator here
+        if (this.currentFile && !this._dirty) {
+            this._dirty = true;
+            const fileSelect = document.getElementById('file-select');
+            if (fileSelect && fileSelect.selectedIndex > 0) {
+                const opt = fileSelect.options[fileSelect.selectedIndex];
+                if (!opt.textContent.startsWith('● ')) {
+                    opt.textContent = '● ' + opt.textContent;
+                }
+            }
+        }
+    }
+
+    _clearDirty() {
+        this._dirty = false;
+        const fileSelect = document.getElementById('file-select');
+        if (fileSelect && fileSelect.selectedIndex > 0) {
+            const opt = fileSelect.options[fileSelect.selectedIndex];
+            opt.textContent = opt.textContent.replace(/^● /, '');
         }
     }
 
@@ -593,7 +632,7 @@ class DocsPort {
                             <span class="text-muted">(${i18n.t('analysis.lines_range')} ${element.line_start}-${element.line_end})</span>
                         </div>
                         <div class="code-element-actions">
-                            <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); executeCodeElement('${element.content}')">
+                            <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); executeCodeElement('${encodeURIComponent(element.content)}')">
                                 <i class="fas fa-play"></i> ${i18n.t('editor.execute')}
                             </button>
                             <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); addCommentToElement('${element.name}', ${element.line_start})">
@@ -723,7 +762,41 @@ class DocsPort {
     }
 
     displayExecutionHistory(history) {
-        console.log('Execution history:', history);
+        const resultContainer = document.getElementById('execution-result');
+        if (!resultContainer) return;
+
+        if (!history || history.length === 0) {
+            resultContainer.innerHTML = `<p class="placeholder">${i18n.t('execution.placeholder')}</p>`;
+            return;
+        }
+
+        let html = '<div class="execution-history-list">';
+        history.forEach(entry => {
+            const success = !entry.error_output;
+            const icon = success ? 'check-circle' : 'times-circle';
+            const color = success ? 'var(--success-color)' : 'var(--danger-color)';
+            const time = entry.execution_time ? `${parseFloat(entry.execution_time).toFixed(3)}s` : '';
+            const date = entry.created_at ? this.formatTimestamp(entry.created_at) : '';
+
+            html += `
+                <div class="history-entry" onclick="window.DocsPort.loadHistoryEntry(${JSON.stringify(entry.code_content).replace(/"/g, '&quot;')})">
+                    <div class="history-entry-header">
+                        <i class="fas fa-${icon}" style="color: ${color}"></i>
+                        <span class="text-muted">${date}</span>
+                        <span class="text-muted">${time}</span>
+                    </div>
+                    <pre class="history-entry-code">${this.escapeHtml((entry.code_content || '').substring(0, 100))}${(entry.code_content || '').length > 100 ? '...' : ''}</pre>
+                </div>
+            `;
+        });
+        html += '</div>';
+        resultContainer.innerHTML = html;
+    }
+
+    loadHistoryEntry(code) {
+        if (this.executionMonaco && code) {
+            this.executionMonaco.setValue(code);
+        }
     }
 
     /**
@@ -760,7 +833,7 @@ class DocsPort {
         let html = '';
         comments.forEach(comment => {
             html += `
-                <div class="comment-item">
+                <div class="comment-item" data-file="${this.escapeHtml(comment.file_path || '')}" data-type="${this.escapeHtml(comment.comment_type || '')}">
                     <div class="comment-header">
                         <span class="comment-type">${comment.comment_type}</span>
                         ${comment.line_number ? `<span class="text-muted">${i18n.t('comments_tab.line')} ${comment.line_number}</span>` : ''}
@@ -1068,15 +1141,37 @@ window.toggleCodeElement = (header) => {
 };
 
 window.executeCodeElement = (code) => {
-    console.log('Executing code element:', code);
+    if (window.DocsPort.executionMonaco) {
+        window.DocsPort.executionMonaco.setValue(decodeURIComponent(code));
+        window.DocsPort.showTab('execution');
+        window.DocsPort.executeCode();
+    }
 };
 
 window.addCommentToElement = (elementName, lineNumber) => {
-    console.log('Adding comment to:', elementName, 'at line', lineNumber);
+    const modal = document.getElementById('comment-modal');
+    const fileInput = document.getElementById('comment-file');
+    const lineInput = document.getElementById('comment-line');
+
+    if (modal && fileInput && lineInput) {
+        fileInput.value = window.DocsPort.currentFile || '';
+        lineInput.value = lineNumber || '';
+        modal.classList.add('active');
+    }
 };
 
 window.filterComments = () => {
-    console.log('Filtering comments...');
+    const fileFilter = document.getElementById('comment-file-filter')?.value || '';
+    const typeFilter = document.getElementById('comment-type-filter')?.value || '';
+    const items = document.querySelectorAll('#comments-list .comment-item');
+
+    items.forEach(item => {
+        const file = item.dataset.file || '';
+        const type = item.dataset.type || '';
+        const matchFile = !fileFilter || file === fileFilter;
+        const matchType = !typeFilter || type === typeFilter;
+        item.style.display = (matchFile && matchType) ? '' : 'none';
+    });
 };
 
 window.switchVisualization = (type) => { window.DocsPort.switchVisualization(type); };
