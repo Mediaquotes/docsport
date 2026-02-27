@@ -5,7 +5,8 @@
 
 **Intelligent Python code documentation and analysis tool** with a built-in editor, AST-based analysis, Mermaid.js visualizations, secure code execution, and multilingual UI.
 
-![DocsPort Screenshot](https://via.placeholder.com/800x400?text=DocsPort+Screenshot)
+<!-- TODO: Replace with actual screenshot after first run -->
+<!-- ![DocsPort Screenshot](docs/screenshot.png) -->
 
 ## Features
 
@@ -31,7 +32,8 @@ git clone https://github.com/mediaquotes/docsport.git
 
 ```bash
 cd docsport
-pip install -r requirements.txt
+pip install .           # recommended (uses pyproject.toml)
+# or: pip install -r requirements.txt
 ```
 
 On Windows you can also double-click `start_docsport.bat`.
@@ -147,6 +149,19 @@ To add a new language, see [CONTRIBUTING.md](CONTRIBUTING.md#adding-translations
 - **Visualization**: [Mermaid.js](https://mermaid.js.org/) + [D3.js](https://d3js.org/)
 - **Database**: SQLite (zero config)
 - **Analysis**: Python `ast` module
+
+## Docker
+
+```bash
+docker-compose up
+```
+
+Or build manually:
+
+```bash
+docker build -t docsport .
+docker run -p 8500:8500 docsport
+```
 
 ## Security
 
