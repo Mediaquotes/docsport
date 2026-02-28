@@ -1,8 +1,6 @@
 """Shared test fixtures for DocsPort."""
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest

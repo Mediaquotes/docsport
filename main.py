@@ -4,15 +4,14 @@ DocsPort Main Entry Point
 Starts the DocsPort system with automatic port allocation and configuration.
 """
 
-import sys
-import os
 import argparse
+import os
+import sys
 from pathlib import Path
 
 # Add current directory to path
 sys.path.append(str(Path(__file__).parent))
 
-from config import DocsPortInitializer
 from backend.app import DocsPortApp
 
 

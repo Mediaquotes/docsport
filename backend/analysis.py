@@ -5,13 +5,10 @@ Analyzes Python code and extracts classes, functions, and methods using AST.
 """
 
 import ast
-import os
 import json
-import sqlite3
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Set
 from datetime import datetime
-import hashlib
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class CodeElement:

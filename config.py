@@ -4,14 +4,13 @@ DocsPort Configuration Management
 Handles configuration, port management, and persistence.
 """
 
-import os
 import json
 import socket
 import sqlite3
-from pathlib import Path
-from typing import Optional, Dict, Any
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -42,7 +41,7 @@ class PortManager:
                 sock.settimeout(1)
                 result = sock.connect_ex((host, port))
                 return result != 0
-        except:
+        except Exception:
             return False
 
     def find_free_port(self, start_port: int = 8500, end_port: int = 9500) -> int:
@@ -80,15 +79,15 @@ class PortManager:
     def is_docsport_instance(self, port: int, host: str = "127.0.0.1") -> bool:
         """Check if a DocsPort instance is running on the port."""
         try:
-            import urllib.request
-            import urllib.error
             import json
+            import urllib.error
+            import urllib.request
 
             url = f"http://{host}:{port}/api/health"
             with urllib.request.urlopen(url, timeout=2) as response:
                 data = json.loads(response.read().decode())
                 return data.get("service") == "DocsPort"
-        except:
+        except Exception:
             return False
 
     def create_new_config(self) -> DocsPortConfig:

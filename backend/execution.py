@@ -4,19 +4,14 @@ DocsPort Code Execution Module
 Secure Python code execution with isolation and monitoring.
 """
 
-import os
-import sys
 import subprocess
+import sys
 import tempfile
-import uuid
-import json
 import time
-import signal
-import threading
-from pathlib import Path
-from typing import Dict, Any, Optional, List
+import uuid
 from datetime import datetime
-import sqlite3
+from pathlib import Path
+from typing import Any, Dict, List
 
 
 class CodeExecutionResult:

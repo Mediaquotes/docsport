@@ -6,10 +6,11 @@ Advanced visualization and analysis of code structure with dropdown functionalit
 
 import ast
 import json
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
-from backend.analysis import PythonCodeAnalyzer, CodeElement
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from backend.analysis import PythonCodeAnalyzer
 
 
 @dataclass
@@ -191,7 +192,7 @@ class VisualCodeAnalyzer:
                     complexity += len(node.values) - 1
 
             return complexity
-        except:
+        except Exception:
             return 1
 
     def _extract_docstring(self, code: str) -> str:
@@ -202,7 +203,7 @@ class VisualCodeAnalyzer:
                 isinstance(tree.body[0], ast.Expr) and
                 isinstance(tree.body[0].value, ast.Str)):
                 return tree.body[0].value.s.strip()
-        except:
+        except Exception:
             pass
         return ""
 
@@ -260,8 +261,9 @@ class VisualCodeAnalyzer:
                 content = f.read()
 
             lines = content.split('\n')
-            metrics["lines_of_code"] = len([l for l in lines if l.strip() and not l.strip().startswith('#')])
-            comment_lines = len([l for l in lines if l.strip().startswith('#')])
+            code_lines = [line for line in lines if line.strip() and not line.strip().startswith('#')]
+            metrics["lines_of_code"] = len(code_lines)
+            comment_lines = len([line for line in lines if line.strip().startswith('#')])
             metrics["comment_ratio"] = comment_lines / len(lines) if lines else 0
 
             for element in analysis["elements"]:
@@ -302,7 +304,6 @@ class VisualCodeAnalyzer:
 def main():
     """Test function."""
     import sys
-    from pathlib import Path
     sys.path.append(str(Path(__file__).parent.parent))
     from config import DatabaseManager
 

@@ -4,32 +4,26 @@ DocsPort Backend - FastAPI Application
 Main application for the DocsPort backend with code analysis and execution features.
 """
 
-import os
 import sys
-import asyncio
-import sqlite3
-import subprocess
-import json
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 from datetime import datetime
-import uuid
+from pathlib import Path
+from typing import Optional
 
 # FastAPI imports
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Form
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 # DocsPort imports
 sys.path.append(str(Path(__file__).parent.parent))
-from config import DocsPortConfig, DatabaseManager, DocsPortInitializer
 from backend.analysis import PythonCodeAnalyzer
 from backend.execution import SecureCodeExecutor
+from backend.i18n import detect_locale, t
 from backend.visual_analyzer import VisualCodeAnalyzer
-from backend.i18n import t, detect_locale
+from config import DatabaseManager, DocsPortInitializer
+
 
 # Pydantic Models
 class CommentRequest(BaseModel):

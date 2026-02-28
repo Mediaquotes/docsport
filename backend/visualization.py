@@ -4,13 +4,10 @@ DocsPort Visualization Module
 Generates flowcharts and visualizations of code structure using Mermaid.js.
 """
 
-import os
 import json
-import sqlite3
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Set
 from datetime import datetime
-import hashlib
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 class MermaidFlowchartGenerator:

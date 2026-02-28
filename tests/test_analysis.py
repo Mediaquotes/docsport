@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.analysis import PythonCodeAnalyzer
@@ -49,9 +51,9 @@ def test_analyze_file_returns_stats(db_manager, sample_python_file):
 
 def test_analyze_file_nonexistent(db_manager):
     analyzer = PythonCodeAnalyzer(db_manager)
-    result = analyzer.analyze_file("/nonexistent/file.py")
 
-    assert "error" in result or result.get("elements", []) == []
+    with pytest.raises(FileNotFoundError):
+        analyzer.analyze_file("/nonexistent/file.py")
 
 
 def test_analyze_file_empty(db_manager, tmp_path):
