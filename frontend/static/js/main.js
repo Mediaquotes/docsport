@@ -3,6 +3,8 @@
  * Handles all client-side functionality for the DocsPort application
  */
 
+function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
 class DocsPort {
     constructor() {
         this.apiBase = '';
@@ -21,7 +23,7 @@ class DocsPort {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
-            securityLevel: 'loose'
+            securityLevel: 'strict'
         });
     }
 
@@ -500,8 +502,8 @@ class DocsPort {
                 html += `
                     <div class="analysis-file">
                         <div class="analysis-file-header">
-                            <h4>${file.file_path}</h4>
-                            <span class="text-danger">${i18n.t('analysis.error')}: ${file.error}</span>
+                            <h4>${escapeHtml(file.file_path)}</h4>
+                            <span class="text-danger">${i18n.t('analysis.error')}: ${escapeHtml(file.error)}</span>
                         </div>
                     </div>
                 `;
@@ -511,7 +513,7 @@ class DocsPort {
             html += `
                 <div class="analysis-file">
                     <div class="analysis-file-header" onclick="toggleAnalysisFile(this)">
-                        <h4>${file.file_path}</h4>
+                        <h4>${escapeHtml(file.file_path)}</h4>
                         <div class="analysis-file-stats">
                             <span class="badge">${i18n.t('analysis.classes')}: ${file.stats?.classes || 0}</span>
                             <span class="badge">${i18n.t('analysis.functions')}: ${file.stats?.functions || 0}</span>
@@ -588,8 +590,8 @@ class DocsPort {
 
         function renderNode(node, level = 0) {
             let html = `<div class="tree-node" style="margin-left: ${level * 20}px;">`;
-            html += `<span class="tree-node-type">${node.type}</span> `;
-            html += `<span class="tree-node-name" onclick="jumpToCode(${node.line})">${node.name}</span>`;
+            html += `<span class="tree-node-type">${escapeHtml(node.type)}</span> `;
+            html += `<span class="tree-node-name" onclick="jumpToCode(${Number(node.line)||0})">${escapeHtml(node.name)}</span>`;
             html += `</div>`;
 
             if (node.children && node.children.length > 0) {
@@ -627,15 +629,15 @@ class DocsPort {
                 <div class="code-element">
                     <div class="code-element-header" onclick="toggleCodeElement(this)">
                         <div class="code-element-info">
-                            <span class="code-element-type">${element.type}</span>
-                            <strong>${element.name}</strong>
+                            <span class="code-element-type">${escapeHtml(element.type)}</span>
+                            <strong>${escapeHtml(element.name)}</strong>
                             <span class="text-muted">(${i18n.t('analysis.lines_range')} ${element.line_start}-${element.line_end})</span>
                         </div>
                         <div class="code-element-actions">
                             <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); executeCodeElement('${encodeURIComponent(element.content)}')">
                                 <i class="fas fa-play"></i> ${i18n.t('editor.execute')}
                             </button>
-                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); addCommentToElement('${element.name}', ${element.line_start})">
+                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); addCommentToElement('${escapeHtml(String(element.name).replace(/'/g, "\\'"))}', ${Number(element.line_start)||0})">
                                 <i class="fas fa-comment"></i> ${i18n.t('tabs.comments')}
                             </button>
                         </div>
@@ -835,7 +837,7 @@ class DocsPort {
             html += `
                 <div class="comment-item" data-file="${this.escapeHtml(comment.file_path || '')}" data-type="${this.escapeHtml(comment.comment_type || '')}">
                     <div class="comment-header">
-                        <span class="comment-type">${comment.comment_type}</span>
+                        <span class="comment-type">${escapeHtml(comment.comment_type)}</span>
                         ${comment.line_number ? `<span class="text-muted">${i18n.t('comments_tab.line')} ${comment.line_number}</span>` : ''}
                     </div>
                     <div class="comment-content">${this.escapeHtml(comment.comment_text)}</div>

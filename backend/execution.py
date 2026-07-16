@@ -4,6 +4,8 @@ DocsPort Code Execution Module
 Secure Python code execution with isolation and monitoring.
 """
 
+import os
+import signal
 import subprocess
 import sys
 import tempfile
@@ -130,6 +132,46 @@ class SecureCodeExecutor:
 
         return True
 
+    @staticmethod
+    def _apply_rlimits(timeout: int):
+        """Return a preexec_fn that caps CPU, memory, file size and process count.
+
+        These are hard, kernel-enforced limits — the real containment layer.
+        Returns None on platforms without the resource module (e.g. Windows).
+        """
+        try:
+            import resource
+        except ImportError:
+            return None
+
+        def _set_limits():
+            cpu = max(1, int(timeout) + 1)
+            resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
+            mem = 256 * 1024 * 1024  # 256 MB address space
+            resource.setrlimit(resource.RLIMIT_AS, (mem, mem))
+            fsize = 10 * 1024 * 1024  # 10 MB max file write
+            resource.setrlimit(resource.RLIMIT_FSIZE, (fsize, fsize))
+            try:
+                resource.setrlimit(resource.RLIMIT_NPROC, (64, 64))  # anti fork-bomb
+            except (ValueError, OSError):
+                pass
+
+        return _set_limits
+
+    @staticmethod
+    def _kill_process_tree(process):
+        """Kill the whole process group so orphaned children don't survive a timeout."""
+        try:
+            if os.name == "posix":
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            else:
+                process.kill()
+        except (ProcessLookupError, OSError):
+            try:
+                process.kill()
+            except OSError:
+                pass
+
     async def _execute_python_code(self, code: str, timeout: int) -> CodeExecutionResult:
         """Execute Python code in an isolated subprocess."""
         result = CodeExecutionResult()
@@ -145,12 +187,32 @@ class SecureCodeExecutor:
             # Execute code
             start_time = time.time()
 
-            process = subprocess.Popen(
-                [sys.executable, str(temp_file)],
+            # Scrub environment so executed code cannot read server secrets/tokens
+            safe_env = {
+                "PATH": os.environ.get("PATH", ""),
+                "PYTHONIOENCODING": "utf-8",
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "HOME": str(self.temp_dir),
+                "TMPDIR": str(self.temp_dir),
+            }
+
+            popen_kwargs = dict(
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                cwd=self.temp_dir
+                cwd=self.temp_dir,
+                env=safe_env,
+            )
+            # New session/process group so timeout kills the whole tree, not just the parent.
+            # rlimits (CPU/memory/file-size/process-count) are a real, OS-enforced boundary —
+            # unlike the best-effort source blacklist. Unix only.
+            if os.name == "posix":
+                popen_kwargs["start_new_session"] = True
+                popen_kwargs["preexec_fn"] = self._apply_rlimits(timeout)
+
+            process = subprocess.Popen(
+                [sys.executable, "-I", str(temp_file)],
+                **popen_kwargs,
             )
 
             try:
@@ -160,7 +222,7 @@ class SecureCodeExecutor:
                 result.return_code = process.returncode
 
             except subprocess.TimeoutExpired:
-                process.kill()
+                self._kill_process_tree(process)
                 result.timeout_occurred = True
                 result.error_output = f"Execution timed out after {timeout} seconds"
                 result.return_code = -1

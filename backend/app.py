@@ -64,8 +64,11 @@ class DocsPortApp:
         """
         project_root = Path.cwd().resolve()
         resolved = (project_root / file_path).resolve()
-        if not str(resolved).startswith(str(project_root)):
+        if not resolved.is_relative_to(project_root):
             raise HTTPException(status_code=403, detail="Access denied: path outside project directory")
+        # Block dotfiles/dotdirs (.env, .git, .docsport.json, ...) to avoid leaking secrets/config
+        if any(part.startswith('.') for part in resolved.relative_to(project_root).parts):
+            raise HTTPException(status_code=403, detail="Access denied: hidden files are not accessible")
         return resolved
 
     def create_app(self) -> FastAPI:
@@ -86,6 +89,19 @@ class DocsPortApp:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+
+        # Anti DNS-rebinding: reject requests whose Host header is not localhost.
+        # CORS only guards reading responses; form-encoded writes (POST /api/files, /api/execute)
+        # are "simple requests" and bypass preflight, so a rebound hostname could otherwise
+        # reach this loopback service. Validate the Host header explicitly.
+        @app.middleware("http")
+        async def _restrict_host(request: Request, call_next):
+            import re as _re
+            from fastapi.responses import JSONResponse
+            host = (request.headers.get("host") or "").split(":")[0]
+            if host and not _re.fullmatch(r"(localhost|127\.0\.0\.1|\[::1\]|::1)", host):
+                return JSONResponse(status_code=421, content={"detail": "Invalid Host header"})
+            return await call_next(request)
 
         # Static Files
         frontend_path = Path(__file__).parent.parent / "frontend"

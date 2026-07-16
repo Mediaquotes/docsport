@@ -185,7 +185,7 @@ class MermaidFlowchartGenerator:
                 lines.append(f'    {file_id} --> {class_id}')
 
                 # Methods of the class
-                methods = [e for e in file_elements if e["type"] == "method" and cls["name"] in e.get("parent", "")]
+                methods = [e for e in file_elements if e["type"] == "method" and e.get("parent") == cls["name"]]
                 for method in methods:
                     method_id = self._sanitize_id(f"{file_path}_{cls['name']}_{method['name']}")
                     lines.append(f'    {method_id}["{method["name"]}()"]')
@@ -241,7 +241,7 @@ class MermaidFlowchartGenerator:
             lines.append(f'    {file_id} --> {class_id}')
 
             # Methods
-            methods = [e for e in elements if e["type"] == "method" and "parent" in e]
+            methods = [e for e in elements if e["type"] == "method" and e.get("parent") == cls["name"]]
             for method in methods:
                 method_id = self._sanitize_id(f"{cls['name']}_{method['name']}")
                 lines.append(f'    {method_id}["{method["name"]}()"]')

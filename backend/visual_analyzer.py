@@ -201,8 +201,9 @@ class VisualCodeAnalyzer:
             tree = ast.parse(code)
             if (tree.body and
                 isinstance(tree.body[0], ast.Expr) and
-                isinstance(tree.body[0].value, ast.Str)):
-                return tree.body[0].value.s.strip()
+                isinstance(tree.body[0].value, ast.Constant) and
+                isinstance(tree.body[0].value.value, str)):
+                return tree.body[0].value.value.strip()
         except Exception:
             pass
         return ""
